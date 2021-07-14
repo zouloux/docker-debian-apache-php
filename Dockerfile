@@ -24,7 +24,7 @@ RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/i
 
 # PHP Extensions
 RUN docker-php-ext-configure intl
-RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql gd zip pdo pdo_mysql intl soap
+RUN docker-php-ext-install -j$(nproc) opcache pdo pdo_mysql gd zip intl soap
 
 # Apcu is only available with pecl. Extension will be loaded in php.ini
 RUN pecl install apcu
@@ -43,7 +43,7 @@ COPY config/vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY devtools/ /devtools/
 
 # Install apache mods and configs
-RUN a2enmod rewrite remoteip
+RUN a2enmod rewrite remoteip headers
 RUN a2enconf zzz-app
 
 # Copy entry point middleware
