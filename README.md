@@ -40,7 +40,7 @@ git submodule add git@github.com:zouloux/docker-debian-apache-php.git
 #### Map volumes
 
 - `/root` is user root directory. Can be used to run processes outside `/public` directory.
-- `/public` is root published directory by Apache.
+- `/root/public` is root published directory by Apache.
 
 
 ```yaml
@@ -50,7 +50,7 @@ services:
     build: deploy/docker-debian-apache-php
     volumes:
       - './:/root'
-      - './dist:/public'
+      - './dist:/root/public'
 ```
 
 
@@ -71,13 +71,13 @@ services:
         IMAGE_PHP_VERSION: 7.3
     volumes:
       - './:/root'
-      - './dist:/public'
+      - './dist:/root/public'
 ```
 
 
 #### Enable apache login / password for public directory
 
-This HTTP password will be required on all `/public` directory.
+This HTTP password will be required on all `/root/public` directory.
 
 ```yaml
 version: "3.7"
@@ -92,7 +92,7 @@ services:
       APACHE_PASSWORD: secret
     volumes:
       - './:/root'
-      - './dist:/public'
+      - './dist:/root/public'
 ```
 
 
@@ -114,7 +114,7 @@ services:
       APACHE_DEVTOOLS: true
     volumes:
       - './:/root'
-      - './dist:/public'
+      - './dist:/root/public'
 ```
 
 
@@ -136,7 +136,7 @@ services:
       APACHE_DEVTOOLS: ${APACHE_DEVTOOLS:-}
     volumes:
       - './:/root'
-      - './dist:/public'
+      - './dist:/root/public'
 ```
 
 
