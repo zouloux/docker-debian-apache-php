@@ -24,7 +24,7 @@ RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/i
 
 # PHP Extensions
 RUN docker-php-ext-configure intl
-RUN docker-php-ext-install -j$(nproc) opcache pdo pdo_mysql gd zip intl soap
+RUN docker-php-ext-install -j$(nproc) opcache pdo pdo_mysql gd zip intl soap mysqli
 
 # Apcu is only available with pecl. Extension will be loaded in php.ini
 RUN pecl install apcu

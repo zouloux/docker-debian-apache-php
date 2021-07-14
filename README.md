@@ -22,6 +22,7 @@ Feel free to extend this image and adapt it to your needs.
 - soap
 - intl
 - apcu cache
+- mysqli
 
 ## Installation
 This Docker image is not pushed to Docker hub. To use it, intall it as a git submodule and target it directly from your `docker-compose`.
