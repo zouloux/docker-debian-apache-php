@@ -1,22 +1,40 @@
 # Docker Image Debian Apache PHP
 LAP Docker image based on Debian, with Apache 2.4, and PHP (7.2 to 7.4).
+This image is missing MySQL or any Database with purpose. Compose with a Mysql or Maria image to add this feature.
+Feel free to extend this image and adapt it to your needs.
 
+## Installed extensions
+
+#### APT Modules
+
+- git
+- zip / unzip
+- libpng / libjpeg / libfreetype (for GD)
+- libicu / libxml2
+- sendmail
+
+#### PHP extensions
+
+- opcache
+- pdo / pdo_mysql
+- gd
+- zip
+- soap
+- intl
+- apcu cache
 
 ## Installation
 This Docker image is not pushed to Docker hub. To use it, intall it as a git submodule and target it directly from your `docker-compose`.
 It is adviced to clone submodule into a `deploy` or `docker` directory, but optionnal.
 
-```
+```bash
 mkdir deploy
 cd deploy
 git submodule add git@github.com:zouloux/docker-debian-apache-php.git
 ```
 
 
-
 ## Docker compose examples
-
-Use `args` to specify current php version. Default PHP version is `7.4`.
 
 
 #### Map volumes
@@ -25,7 +43,7 @@ Use `args` to specify current php version. Default PHP version is `7.4`.
 - `/public` is root published directory by Apache.
 
 
-```docker-compose
+```yaml
 version: "3.7"
 services:
   lap :
@@ -38,10 +56,12 @@ services:
 
 #### Specify which PHP version to build / use
 
+Use `args` to specify current php version. Default PHP version is `7.4`.
 Default version is PHP `7.4`.
+PHP versions can go from `7.0` to tested `7.4`. Other version may works.
+Docker image needs to be rebuilt if changed, with `docker-compose build`.
 
-
-```docker-compose
+```yaml
 version: "3.7"
 services:
   lap :
@@ -59,7 +79,7 @@ services:
 
 This HTTP password will be required on all `/public` directory.
 
-```docker-compose
+```yaml
 version: "3.7"
 services:
   lap :
@@ -76,11 +96,33 @@ services:
 ```
 
 
+#### Dev tools
+
+Some devtools can be installed. `http://docker-host/devtools` folder will be available if enabled.
+See [/devtools](https://github.com/zouloux/docker-debian-apache-php/tree/main/devtools) directory.
+
+Available devtools :
+- apcu cache monitor
+- phpinfo
+
+```yaml
+version: "3.7"
+services:
+  lap :
+    build: deploy/docker-debian-apache-php
+    environment:
+      APACHE_DEVTOOLS: true
+    volumes:
+      - './:/root'
+      - './dist:/public'
+```
+
+
 #### Use envs
 
 A `dotenv` file can also be used for convenience.
 
-```docker-compose
+```yaml
 version: "3.7"
 services:
   lap :
