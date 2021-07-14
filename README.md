@@ -4,6 +4,14 @@ LAP Docker image based on Debian, with Apache 2.4, and PHP (7.2 to 7.4).
 
 ## Installation
 This Docker image is not pushed to Docker hub. To use it, intall it as a git submodule and target it directly from your `docker-compose`.
+It is adviced to clone submodule into a `deploy` or `docker` directory, but optionnal.
+
+```
+mkdir deploy
+cd deploy
+git submodule add git@github.com:zouloux/docker-debian-apache-php.git
+```
+
 
 
 ## Docker compose examples
@@ -21,7 +29,7 @@ Use `args` to specify current php version. Default PHP version is `7.4`.
 version: "3.7"
 services:
   lap :
-    build: deploy/debian-apache-php
+    build: deploy/docker-debian-apache-php
     volumes:
       - './:/root'
       - './dist:/public'
@@ -38,7 +46,7 @@ version: "3.7"
 services:
   lap :
     build:
-      context: deploy/debian-apache-php
+      context: deploy/docker-debian-apache-php
       args:
         IMAGE_PHP_VERSION: 7.3
     volumes:
@@ -56,7 +64,7 @@ version: "3.7"
 services:
   lap :
     build:
-      context: deploy/debian-apache-php
+      context: deploy/docker-debian-apache-php
       args:
         IMAGE_PHP_VERSION: 7.3
     environment:
@@ -77,9 +85,9 @@ version: "3.7"
 services:
   lap :
     build:
-      context: deploy/debian-apache-php
+      context: deploy/docker-debian-apache-php
       args:
-        IMAGE_PHP_VERSION: ${PHP_VERSION:-7.4}
+        IMAGE_PHP_VERSION: ${PHP_VERSION:-}
     environment:
       APACHE_LOGIN: ${APACHE_LOGIN:-}
       APACHE_PASSWORD: ${APACHE_PASSWORD:-}
