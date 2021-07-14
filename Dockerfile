@@ -8,7 +8,7 @@ FROM php:${IMAGE_PHP_VERSION}-apache
 # Install utils
 RUN apt update -qq
 RUN apt install -qy \
-    git \ gnupg \
+    git gnupg \
     zip unzip libzip-dev \
     libpng-dev libjpeg-dev libfreetype6-dev \
     libicu-dev libxml2-dev \
