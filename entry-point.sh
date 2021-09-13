@@ -14,8 +14,5 @@ if [[ -n "${APACHE_DEVTOOLS}" ]]; then
   a2enconf zzz-devtools
 fi
 
-# Patch rights on root folder
-chmod 0655 /root
-
 # Start apache
 apache2-foreground

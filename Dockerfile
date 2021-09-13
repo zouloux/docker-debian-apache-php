@@ -54,5 +54,8 @@ RUN chmod +x /entry-point.sh
 EXPOSE 80
 WORKDIR /root
 
+# Patch root rights before volumes are mapped
+RUN chmod 655 /root
+
 # Start
 CMD ["/entry-point.sh"]
