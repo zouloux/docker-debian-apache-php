@@ -10,7 +10,7 @@ RUN apt update -qq
 RUN apt install -qy \
     git gnupg \
     zip unzip libzip-dev \
-    libpng-dev libjpeg-dev libfreetype6-dev \
+    libpng-dev libjpeg-dev libfreetype6-dev libwebp-dev \
     libicu-dev libxml2-dev \
     sendmail sendmail-cf m4
 
@@ -19,8 +19,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # GD configration depends on installed PHP version ...
-RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
-    || docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/;
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ --with-webp --with-webp-dir=/usr \
+    || docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp --with-webp-dir=/usr;
 
 # PHP Extensions
 RUN docker-php-ext-configure intl
