@@ -28,10 +28,15 @@ Feel free to extend this image and adapt it to your needs.
 This Docker image is not pushed to Docker hub. To use it, intall it as a git submodule and target it directly from your `docker-compose`.
 It is adviced to clone submodule into a `deploy` or `docker` directory, but optionnal.
 
+
+In current directory :
 ```bash
-mkdir deploy
-cd deploy
 git submodule add git@github.com:zouloux/docker-debian-apache-php.git
+```
+
+In a specific directory :
+```bash
+git submodule add git@github.com:zouloux/docker-debian-apache-php.git deploy/docker-debian-apache-php
 ```
 
 
