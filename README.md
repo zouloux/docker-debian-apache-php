@@ -31,12 +31,12 @@ It is adviced to clone submodule into a `deploy` or `docker` directory, but opti
 
 In current directory :
 ```bash
-git submodule add git@github.com:zouloux/docker-debian-apache-php.git
+git submodule add https://github.com/zouloux/docker-debian-apache-php.git
 ```
 
 In a specific directory :
 ```bash
-git submodule add git@github.com:zouloux/docker-debian-apache-php.git deploy/docker-debian-apache-php
+git submodule add https://github.com/zouloux/docker-debian-apache-php.git deploy/docker-debian-apache-php
 ```
 
 
