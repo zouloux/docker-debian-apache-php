@@ -1,7 +1,8 @@
 # Docker Image Debian Apache PHP
 
 LAP Docker image based on Debian, with Apache 2.4, and PHP (7.2 to 7.4).
-This image is missing MySQL or any Database with purpose. Compose with a Mysql or Maria image to add this feature.
+This image is missing MySQL or any Database on purpose.
+[Compose with a Mysql or Maria image to add this feature.](https://github.com/zouloux/docker-debian-apache-php#compose-mysql-image)
 Feel free to extend this image and adapt it to your needs.
 
 ## Installed extensions
@@ -41,7 +42,6 @@ services:
     image: zouloux/docker-debian-apache-php
     volumes:
       - './:/root'
-      - './dist:/root/public'
 ```
 
 # Specific PHP version (7.2 / 7.3 / 7.4 / 8.0)
@@ -52,7 +52,6 @@ services:
     image: zouloux/docker-debian-apache-php:PHP7.2
     volumes:
       - './:/root'
-      - './dist:/root/public'
 ```
 
 #### Local build with git submodule
@@ -75,7 +74,6 @@ services:
     image: zouloux/docker-debian-apache-php
     volumes:
       - './:/root'
-      - './dist:/root/public'
 ```
 
 #### Specify which PHP version to build / use
@@ -94,7 +92,6 @@ services:
         IMAGE_PHP_VERSION: 7.3
     volumes:
       - './:/root'
-      - './dist:/root/public'
 ```
 
 ## Docker compose examples
@@ -129,7 +126,6 @@ services:
       DDAP_PASSWORD: secret
     volumes:
       - './:/root'
-      - './dist:/root/public'
 ```
 
 #### Dev tools
@@ -150,7 +146,6 @@ services:
       DDAP_DEVTOOLS: true
     volumes:
       - './:/root'
-      - './dist:/root/public'
 ```
 
 #### Enable memcached server
@@ -177,7 +172,6 @@ services:
       #DDAP_MEMCACHED_MAX_REQS_PER_EVENT: "20"
     volumes:
       - './:/root'
-      - './dist:/root/public'
 ```
 
 
@@ -199,14 +193,12 @@ services:
       DDAP_DEVTOOLS: ${DDAP_DEVTOOLS:-}
     volumes:
       - './:/root'
-      - './dist:/root/public'
 ```
 
 
 `.env` file :
 ```
 PHP_VERSION=7.2
-<<<<<<< HEAD
 DDAP_LOGIN=admin
 DDAP_PASSWORD=secret
 DDAP_DEVTOOLS=true
@@ -229,8 +221,36 @@ Default configs are [available here](https://github.com/zouloux/docker-debian-ap
           DDAP_DEVTOOLS: ${DDAP_DEVTOOLS:-}
         volumes:
           - './:/root'
-          - './dist:/root/public'
           - './config/php.ini:/config/php.ini'
+```
+
+#### Compose MySQL image
+
+This image is missing MySQL image on purpose. To add a MySQL server to your stack :
+```yaml
+    version: "3.7"
+    services:
+      ddap :
+        image: zouloux/docker-debian-apache-php
+        volumes:
+          - './:/root'
+      maria:
+        image: mariadb
+        restart: unless-stopped
+        container_name: maria
+        hostname: maria
+        ports:
+          - '3306:3306'
+        environment:
+          MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-}"
+        volumes :
+          - './data/mysql:/var/lib/mysql:delegated'
+      phpmyadmin:
+        image: phpmyadmin
+        restart: unless-stopped
+        container_name: phpmyadmin
+        environment:
+          PMA_HOST: "maria"
 ```
 
 
@@ -241,9 +261,4 @@ Default configs are [available here](https://github.com/zouloux/docker-debian-ap
 - `docker-compose build`
 - `docker-compose up`
 - Then go to localhost:8080
-=======
-APACHE_LOGIN=admin
-APACHE_PASSWORD=secret
-APACHE_DEVTOOLS=true
-```
->>>>>>> 6eff8a70cc1a987c527b715eef4f935f92dce570
+
