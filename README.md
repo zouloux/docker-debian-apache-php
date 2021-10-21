@@ -38,7 +38,7 @@ Common usage is to use an already built image from Docker Hub :
 ```yaml
 version: "3.7"
 services:
-  lap :
+  ddap :
     image: zouloux/docker-debian-apache-php
     volumes:
       - './:/root'
@@ -49,7 +49,7 @@ services:
 ```yaml
 version: "3.7"
 services:
-  lap :
+  ddap :
     image: zouloux/docker-debian-apache-php:PHP7.2
     volumes:
       - './:/root'
@@ -72,7 +72,7 @@ git submodule add git@github.com:zouloux/docker-debian-apache-php.git
 ```yaml
 version: "3.7"
 services:
-  lap :
+  ddap :
     image: zouloux/docker-debian-apache-php
     volumes:
       - './:/root'
@@ -88,7 +88,7 @@ Docker image needs to be rebuilt if changed, with `docker-compose build`.
 ```yaml
 version: "3.7"
 services:
-  lap :
+  ddap :
     build:
       context: deploy/docker-debian-apache-php
       args:
@@ -109,7 +109,7 @@ services:
 ```yaml
 version: "3.7"
 services:
-  lap :
+  ddap :
     image: zouloux/docker-debian-apache-php
     volumes:
       - './:/root'
@@ -123,7 +123,7 @@ This HTTP password will be required on all `/root/public` directory.
 ```yaml
 version: "3.7"
 services:
-  lap :
+  ddap :
     image: zouloux/docker-debian-apache-php
     environment:
       DDAP_LOGIN: admin
@@ -145,8 +145,8 @@ Available devtools :
 ```yaml
 version: "3.7"
 services:
-  lap :
-    build: deploy/docker-debian-apache-php
+  ddap :
+    image: zouloux/docker-debian-apache-php
     environment:
       DDAP_DEVTOOLS: true
     volumes:
@@ -163,8 +163,8 @@ To check memcached, enable devtools and go to `/devtools/memcached`
 ```yaml
 version: "3.7"
 services:
-  lap :
-    build: deploy/docker-debian-apache-php
+  ddap :
+    image: zouloux/docker-debian-apache-php
     environment:
       # Enabled memcached server
       DDAP_MEMCACHED: 'true'
@@ -189,7 +189,7 @@ A `dotenv` file can also be used for convenience.
 ```yaml
 version: "3.7"
 services:
-  lap :
+  ddap :
     build:
       context: deploy/docker-debian-apache-php
       args:
@@ -210,6 +210,27 @@ PHP_VERSION=7.2
 DDAP_LOGIN=admin
 DDAP_PASSWORD=secret
 DDAP_DEVTOOLS=true
+```
+
+#### Custom config
+
+To use custom config files for apache or php,
+Simply create your `config/php.ini` for ex, and map specific config file with `volumes`.
+Default configs are [available here](https://github.com/zouloux/docker-debian-apache-php/tree/main/config). 
+
+```yaml
+    version: "3.7"
+    services:
+      ddap :
+        image: zouloux/docker-debian-apache-php
+        environment:
+          DDAP_LOGIN: ${DDAP_LOGIN:-}
+          DDAP_PASSWORD: ${DDAP_PASSWORD:-}
+          DDAP_DEVTOOLS: ${DDAP_DEVTOOLS:-}
+        volumes:
+          - './:/root'
+          - './dist:/root/public'
+          - './config/php.ini:/config/php.ini'
 ```
 
 

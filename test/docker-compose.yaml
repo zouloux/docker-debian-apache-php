@@ -17,4 +17,7 @@ services:
     ports :
       - '8080:80'
     volumes:
+      # Map only root, public/ will follow
       - './:/root'
+      # Ex : use specific php.ini config
+      - './config/php.ini:/config/php.ini'

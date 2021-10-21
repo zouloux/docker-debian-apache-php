@@ -45,12 +45,13 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Clean
 RUN apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Copy config files
-COPY config/app.conf /etc/apache2/conf-available/zzz-app.conf
-COPY config/devtools.conf /etc/apache2/conf-available/zzz-devtools.conf
-COPY config/password.conf /etc/apache2/conf-available/zzz-password.conf
-COPY config/php.ini /usr/local/etc/php/conf.d/app.ini
-COPY config/vhost.conf /etc/apache2/sites-available/000-default.conf
+# Copy config directory and link each files
+COPY config /config
+RUN ln -sf /config/app.conf /etc/apache2/conf-available/zzz-app.conf; \
+    ln -sf /config/devtools.conf /etc/apache2/conf-available/zzz-devtools.conf; \
+    ln -sf /config/password.conf /etc/apache2/conf-available/zzz-password.conf; \
+    ln -sf /config/php.ini /usr/local/etc/php/conf.d/app.ini; \
+    ln -sf /config/vhost.conf /etc/apache2/sites-available/000-default.conf;
 
 # Copy devtools
 COPY devtools/ /devtools/
@@ -58,6 +59,7 @@ COPY devtools/ /devtools/
 # Install memcache admin in dev tools
 RUN git clone https://github.com/hatamiarash7/Memcached-Admin.git /tmp/memcached-admin
 RUN mv /tmp/memcached-admin/app /devtools/memcached
+RUN rm -rf /tmp/memcached-admin
 
 # Install apache mods and configs
 RUN a2enmod rewrite remoteip headers
