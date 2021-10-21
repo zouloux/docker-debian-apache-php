@@ -1,13 +1,13 @@
 # Docker Debian Apache PHP
 
-DDAP Docker image based on Debian, with Apache 2.4, and PHP (7.2 to 7.4).
+DDAP is based on Debian, with Apache 2.4, and PHP (from 7.2 to 8.0).
 This image is missing MySQL or any Database on purpose.
 [Compose with a Mysql or Maria image to add this feature.](https://github.com/zouloux/docker-debian-apache-php#compose-mysql-image)
 Feel free to extend this image and adapt it to your needs.
 
 ## Installed extensions
 
-#### APT Modules
+### APT Modules
 
 - git
 - zip / unzip
@@ -16,7 +16,7 @@ Feel free to extend this image and adapt it to your needs.
 - memcached
 - sendmail
 
-#### PHP extensions
+### PHP extensions
 
 - opcache
 - pdo / pdo_mysql
@@ -30,7 +30,7 @@ Feel free to extend this image and adapt it to your needs.
 
 ## Usage
 
-#### Build from docker hub
+### Install from docker hub
 
 Common usage is to use an already built image from Docker Hub :
 
@@ -54,7 +54,7 @@ services:
       - './:/root'
 ```
 
-#### Local build with git submodule
+### Local build with git submodule
 
 This is a less common usage but can be handy if you need to tweak this image to
 fit specific project needs. Install it as a git submodule and target it directly
@@ -76,7 +76,7 @@ services:
       - './:/root'
 ```
 
-#### Specify which PHP version to build / use
+### Specify which PHP version to build / use
 
 Use `args` to specify current php version. Default PHP version is `7.4`.
 Available (tested) versions are 7.2 / 7.3 / 7.4 / 8.0. 
@@ -97,7 +97,7 @@ services:
 ## Docker compose examples
 
 
-#### Map volumes
+### Map volumes
 
 - `/root` is user root directory. Can be used to run processes outside `/public` directory.
 - `/root/public` is root published directory by Apache.
@@ -112,7 +112,7 @@ services:
       - './dist:/root/public'
 ```
 
-#### Enable apache login / password for public directory
+### Enable apache login / password for public directory
 
 This HTTP password will be required on all `/root/public` directory.
 
@@ -128,7 +128,7 @@ services:
       - './:/root'
 ```
 
-#### Dev tools
+### Dev tools
 
 Some devtools can be installed. `http://docker-host/devtools` folder will be available if enabled.
 See [/devtools](https://github.com/zouloux/docker-debian-apache-php/tree/main/devtools) directory.
@@ -148,7 +148,7 @@ services:
       - './:/root'
 ```
 
-#### Enable memcached server
+### Enable memcached server
 
 Enable memcached server and optionaly configure it to your needs.
 Default config is working out of the box.
@@ -175,7 +175,7 @@ services:
 ```
 
 
-#### Use envs
+### Use envs
 
 A `dotenv` file can also be used for convenience.
 
@@ -204,7 +204,7 @@ DDAP_PASSWORD=secret
 DDAP_DEVTOOLS=true
 ```
 
-#### Custom config
+### Custom config
 
 To use custom config files for apache or php,
 Simply create your `config/php.ini` for ex, and map specific config file with `volumes`.
@@ -224,7 +224,7 @@ Default configs are [available here](https://github.com/zouloux/docker-debian-ap
           - './config/php.ini:/config/php.ini'
 ```
 
-#### Compose MySQL image
+### Compose MySQL image
 
 This image is missing MySQL image on purpose. To add a MySQL server to your stack :
 ```yaml
