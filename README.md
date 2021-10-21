@@ -33,7 +33,6 @@ Feel free to extend this image and adapt it to your needs.
 
 Common usage is to use an already built image from Docker Hub :
 
-
 # Default PHP version (7.4)
 ```yaml
 version: "3.7"
@@ -207,6 +206,7 @@ services:
 `.env` file :
 ```
 PHP_VERSION=7.2
+<<<<<<< HEAD
 DDAP_LOGIN=admin
 DDAP_PASSWORD=secret
 DDAP_DEVTOOLS=true
@@ -241,3 +241,9 @@ Default configs are [available here](https://github.com/zouloux/docker-debian-ap
 - `docker-compose build`
 - `docker-compose up`
 - Then go to localhost:8080
+=======
+APACHE_LOGIN=admin
+APACHE_PASSWORD=secret
+APACHE_DEVTOOLS=true
+```
+>>>>>>> 6eff8a70cc1a987c527b715eef4f935f92dce570
