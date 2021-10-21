@@ -1,0 +1,20 @@
+
+version: "3.7"
+services:
+  lap :
+    build:
+      context: ../
+      args:
+        IMAGE_PHP_VERSION: "7.4"
+    environment:
+      # Enable http login password
+      #DDAP_LOGIN: "login"
+      #DDAP_PASSWORD: "password"
+      # Enabled php devtools in /devtools
+      DDAP_DEVTOOLS: 'true'
+      # Enabled memcached server
+      DDAP_MEMCACHED: 'true'
+    ports :
+      - '8080:80'
+    volumes:
+      - './:/root'

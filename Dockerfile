@@ -4,30 +4,43 @@
 # - https://www.pascallandau.com/blog/structuring-the-docker-setup-for-php-projects/
 ARG IMAGE_PHP_VERSION=7.4
 FROM php:${IMAGE_PHP_VERSION}-apache
+SHELL ["/bin/bash", "-c"]
 
 # Install utils
-RUN apt update -qq
-RUN apt install -qy \
+RUN apt update -qq && apt install -qy \
     git gnupg \
     zip unzip libzip-dev \
     libpng-dev libjpeg-dev libfreetype6-dev libwebp-dev \
     libicu-dev libxml2-dev \
+    memcached libmemcached-dev libmemcached-tools libzip-dev \
     sendmail sendmail-cf m4
+
+# Go to bash and get back php version here
+ARG IMAGE_PHP_VERSION=7.4
+RUN MAJOR_PHP_VERSION=`echo $IMAGE_PHP_VERSION | cut -c1-1`
+RUN echo "Using major version ${MAJOR_PHP_VERSION} and full version ${IMAGE_PHP_VERSION}"
+
+# GD configration depends on installed PHP version ...
+RUN if test "${IMAGE_PHP_VERSION}" = "7.2" || test "${IMAGE_PHP_VERSION}" = "7.3" ; then \
+      docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr; \
+    else \
+      docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ --with-webp=/usr; \
+    fi;
+
+# Configure PHP Extensions
+RUN docker-php-ext-configure intl \
+    && docker-php-ext-configure zip
+
+# Install PHP extensions
+RUN docker-php-ext-install -j$(nproc) opcache pdo pdo_mysql gd zip intl soap mysqli
+
+# Apcu and memcached are only available with pecl. APCU extension will be loaded in php.ini
+RUN pecl install apcu; pecl install memcached
+RUN docker-php-ext-enable memcached
 
 # Install composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# GD configration depends on installed PHP version ...
-RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ --with-webp=/usr \
-    || docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr;
-
-# PHP Extensions
-RUN docker-php-ext-configure intl
-RUN docker-php-ext-install -j$(nproc) opcache pdo pdo_mysql gd zip intl soap mysqli
-
-# Apcu is only available with pecl. Extension will be loaded in php.ini
-RUN pecl install apcu
 
 # Clean
 RUN apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -41,6 +54,10 @@ COPY config/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 # Copy devtools
 COPY devtools/ /devtools/
+
+# Install memcache admin in dev tools
+RUN git clone https://github.com/hatamiarash7/Memcached-Admin.git /tmp/memcached-admin
+RUN mv /tmp/memcached-admin/app /devtools/memcached
 
 # Install apache mods and configs
 RUN a2enmod rewrite remoteip headers
