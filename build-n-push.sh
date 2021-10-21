@@ -1,17 +1,19 @@
 # PHP versions
 # https://www.php.net/supported-versions.php
 
+# -------- NAMED TAGS
+
 # Latest = 7.4
 docker build -t ddap:latest . --build-arg IMAGE_PHP_VERSION=7.4
 docker tag ddap:latest zouloux/docker-debian-apache-php:latest
 docker push zouloux/docker-debian-apache-php:latest
 
 # Next = 8.0
-docker build -t ddap:latest . --build-arg IMAGE_PHP_VERSION=8.0
-docker tag ddap:latest zouloux/docker-debian-apache-php:latest
-docker push zouloux/docker-debian-apache-php:latest
+docker build -t ddap:next . --build-arg IMAGE_PHP_VERSION=8.0
+docker tag ddap:next zouloux/docker-debian-apache-php:next
+docker push zouloux/docker-debian-apache-php:next
 
-# --------
+# -------- VERSIONS
 
 # Legacy 7.2
 docker build -t ddap:PHP7.2 . --build-arg IMAGE_PHP_VERSION=7.2
