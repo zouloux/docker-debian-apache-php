@@ -1,6 +1,6 @@
-# Docker Image Debian Apache PHP
+# Docker Debian Apache PHP
 
-LAP Docker image based on Debian, with Apache 2.4, and PHP (7.2 to 7.4).
+DDAP Docker image based on Debian, with Apache 2.4, and PHP (7.2 to 7.4).
 This image is missing MySQL or any Database on purpose.
 [Compose with a Mysql or Maria image to add this feature.](https://github.com/zouloux/docker-debian-apache-php#compose-mysql-image)
 Feel free to extend this image and adapt it to your needs.
