@@ -172,7 +172,7 @@ services:
 ```
 
 
-### Use envs
+### Use dot env file
 
 A `dotenv` file can also be used for convenience.
 
