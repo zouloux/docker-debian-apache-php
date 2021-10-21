@@ -62,25 +62,23 @@ from your `docker-compose`. It is advised to clone submodule into a `deploy` or
 `docker` directory, but optional.
 
 ```bash
-mkdir deploy
-cd deploy
-git submodule add git@github.com:zouloux/docker-debian-apache-php.git
+git submodule add git@github.com:zouloux/docker-debian-apache-php.git deploy/docker-debian-apache-php
 ```
+
+Using default PHP 7.4 version :
 
 ```yaml
 version: "3.7"
 services:
   ddap :
-    image: zouloux/docker-debian-apache-php
+    build: deploy/docker-debian-apache-php
     volumes:
       - './:/root'
 ```
 
-### Specify which PHP version to build / use
-
-Use `args` to specify current php version. Default PHP version is `7.4`.
-Available (tested) versions are 7.2 / 7.3 / 7.4 / 8.0. 
-Docker image needs to be rebuilt if changed, with `docker-compose build`.
+Use `args` to specify current php version. Available (tested) versions are 7.2 / 7.3 / 7.4 / 8.0.
+Next versions like 8.1 may work.
+Docker image needs to be rebuilt if `args` are changed, with `docker-compose build`.
 
 ```yaml
 version: "3.7"
@@ -95,7 +93,6 @@ services:
 ```
 
 ## Docker compose examples
-
 
 ### Map volumes
 
