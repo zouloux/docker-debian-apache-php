@@ -1,6 +1,6 @@
 # Docker Debian Apache PHP
 
-DDAP image is based on Debian, with Apache 2.4, and PHP (from 7.2 to 8.0).
+DDAP image is based on Debian, with Apache 2.4, and PHP (from 7.2 to 8.1).
 This image is missing MySQL or any Database on purpose.
 [Compose with a Mysql or Maria image to add this feature.](https://github.com/zouloux/docker-debian-apache-php#compose-mysql-image)
 Feel free to extend this image and adapt it to your needs.
@@ -36,7 +36,7 @@ Feel free to extend this image and adapt it to your needs.
 
 Common usage is to use an already built image from Docker Hub :
 
-# Default PHP version (7.4)
+# Default PHP version (8.0)
 ```yaml
 version: "3.7"
 services:
@@ -46,7 +46,7 @@ services:
       - './:/root'
 ```
 
-# Specific PHP version (7.2 / 7.3 / 7.4 / 8.0)
+# Specific PHP version (7.2 / 7.3 / 7.4 / 8.0 / 8.1)
 ```yaml
 version: "3.7"
 services:
@@ -67,7 +67,7 @@ from your `docker-compose`. It is advised to clone submodule into a `deploy` or
 git submodule add git@github.com:zouloux/docker-debian-apache-php.git deploy/docker-debian-apache-php
 ```
 
-Using default PHP 7.4 version :
+Using default PHP 8.0 version :
 
 ```yaml
 version: "3.7"
