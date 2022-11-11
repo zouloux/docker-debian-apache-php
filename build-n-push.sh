@@ -1,42 +1,20 @@
 # PHP versions
 # https://www.php.net/supported-versions.php
 
-# -------- NAMED TAGS
+# Create and use CrossBuilder to be able to build for amd64 and arm64
+docker buildx use CrossBuilder || (docker buildx create CrossBuilder && docker buildx use CrossBuilder)
 
-# Latest = 8.0
-docker build -t ddap:latest . --build-arg IMAGE_PHP_VERSION=8.0
-docker tag ddap:latest zouloux/docker-debian-apache-php:latest
-docker push zouloux/docker-debian-apache-php:latest
+# PHP 8.0 - latest
+docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t zouloux/docker-debian-apache-php:8.0 -t zouloux/docker-debian-apache-php:latest --build-arg IMAGE_PHP_VERSION=8.0 --push .
 
-# Next = 8.1
-docker build -t ddap:next . --build-arg IMAGE_PHP_VERSION=8.1
-docker tag ddap:next zouloux/docker-debian-apache-php:next
-docker push zouloux/docker-debian-apache-php:next
+# PHP 8.1 - next
+docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t zouloux/docker-debian-apache-php:8.1 -t zouloux/docker-debian-apache-php:next --build-arg IMAGE_PHP_VERSION=8.1 --push .
 
-# -------- VERSIONS
+# PHP 7.2 ( legacy )
+docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t zouloux/docker-debian-apache-php:7.2 --build-arg IMAGE_PHP_VERSION=7.2 --push .
 
-# Legacy 7.2
-docker build -t ddap:PHP7.2 . --build-arg IMAGE_PHP_VERSION=7.2
-docker tag ddap:PHP7.2 zouloux/docker-debian-apache-php:PHP7.2
-docker push zouloux/docker-debian-apache-php:PHP7.2
+# PHP 7.3 ( legacy )
+docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t zouloux/docker-debian-apache-php:7.3 --build-arg IMAGE_PHP_VERSION=7.3 --push .
 
-# Legacy 7.3
-docker build -t ddap:PHP7.3 . --build-arg IMAGE_PHP_VERSION=7.3
-docker tag ddap:PHP7.3 zouloux/docker-debian-apache-php:PHP7.3
-docker push zouloux/docker-debian-apache-php:PHP7.3
-
-# Legacy 7.4
-docker build -t ddap:PHP7.4 . --build-arg IMAGE_PHP_VERSION=7.4
-docker tag ddap:PHP7.4 zouloux/docker-debian-apache-php:PHP7.4
-docker push zouloux/docker-debian-apache-php:PHP7.4
-
-# Current 8.0
-docker build -t ddap:PHP8.0 . --build-arg IMAGE_PHP_VERSION=8.0
-docker tag ddap:PHP8.0 zouloux/docker-debian-apache-php:PHP8.0
-docker push zouloux/docker-debian-apache-php:PHP8.0
-
-# Next 8.1
-docker build -t ddap:PHP8.1 . --build-arg IMAGE_PHP_VERSION=8.1
-docker tag ddap:PHP8.1 zouloux/docker-debian-apache-php:PHP8.1
-docker push zouloux/docker-debian-apache-php:PHP8.1
-
+# PHP 7.4 ( legacy )
+docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t zouloux/docker-debian-apache-php:7.4 --build-arg IMAGE_PHP_VERSION=7.4 --push .

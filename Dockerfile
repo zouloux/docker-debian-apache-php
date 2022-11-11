@@ -2,41 +2,29 @@
 # - https://blog.silarhi.fr/image-docker-php-apache-parfaite/
 # - https://semaphoreci.com/community/tutorials/dockerizing-a-php-application
 # - https://www.pascallandau.com/blog/structuring-the-docker-setup-for-php-projects/
-ARG IMAGE_PHP_VERSION=7.4
+
+# Build X
+# - https://www.docker.com/blog/faster-multi-platform-builds-dockerfile-cross-compilation-guide/
+# Here $BUILDPLATFORM is m1 so we do not want that.
+#FROM --platform=$BUILDPLATFORM php:${IMAGE_PHP_VERSION}-apache
+
+ARG IMAGE_PHP_VERSION=8.0
 FROM php:${IMAGE_PHP_VERSION}-apache
 SHELL ["/bin/bash", "-c"]
 
-# Install utils
-RUN apt update -qq && apt install -qy \
-    git gnupg \
-    zip unzip libzip-dev \
-    libpng-dev libjpeg-dev libfreetype6-dev libwebp-dev \
-    libicu-dev libxml2-dev \
-    memcached libmemcached-dev libmemcached-tools libzip-dev \
-    sendmail sendmail-cf m4
+# We need to reassign ARG here after FROM
+ARG IMAGE_PHP_VERSION=8.0
+RUN echo "Building image with php${IMAGE_PHP_VERSION}"
 
-# Go to bash and get back php version here
-ARG IMAGE_PHP_VERSION=7.4
-RUN MAJOR_PHP_VERSION=`echo $IMAGE_PHP_VERSION | cut -c1-1`
-RUN echo "Using major version ${MAJOR_PHP_VERSION} and full version ${IMAGE_PHP_VERSION}"
+# Install dependencies
+RUN apt update -q && apt install -qy git sendmail sendmail-cf
 
-# GD configration depends on installed PHP version ...
-RUN if test "${IMAGE_PHP_VERSION}" = "7.2" || test "${IMAGE_PHP_VERSION}" = "7.3" ; then \
-      docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-webp-dir=/usr; \
-    else \
-      docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ --with-webp=/usr; \
-    fi;
+# We use this script and docker-php-ext which seems to work better with buildx
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions
 
-# Configure PHP Extensions
-RUN docker-php-ext-configure intl \
-    && docker-php-ext-configure zip
-
-# Install PHP extensions
-RUN docker-php-ext-install -j$(nproc) opcache pdo pdo_mysql gd zip intl soap mysqli
-
-# Apcu and memcached are only available with pecl. APCU extension will be loaded in php.ini
-RUN pecl install apcu; pecl install memcached
-RUN docker-php-ext-enable memcached
+# Install php extensions
+RUN install-php-extensions opcache pdo_mysql gd zip intl soap mysqli mcrypt apcu bz2 memcached
 
 # Install composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
