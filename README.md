@@ -10,13 +10,19 @@ Feel free to extend this image and adapt it to your needs or use it directly for
 
 > This image is built for `linux/amd64` and `linux/arm64`
 
+> **New** : this image is now from debian-slim, and not from PHP:X-apache anymore.
+> It's way slimmer and faster to build. See [./v1](v1) for previous source code.
+
 ## Installed extensions
 
 ### APT Modules
 
-- all modules installed by default with Debian 11s
+- all modules installed by default with Debian 11 slim
+- gnupg2
+- curl
 - git
 - sendmail
+- zip / unzip
 
 ### Other utilities
 
@@ -24,26 +30,11 @@ Feel free to extend this image and adapt it to your needs or use it directly for
 
 ### PHP extensions
 
-- opcache
-- pdo / pdo_mysql
-- gd
-- zip
-- soap
-- intl
-- apcu
-- memcached
-- mysqli
-
-If you need any PHP extension, extend this image in a new `Dockerfile` then use `install-php-extensions` ([more info](https://github.com/mlocati/docker-php-extension-installer)).
-
-```Dockerfile
-FROM zouloux/docker-debian-apache-php
-RUN install-php-extensions opcache pdo_mysql gd zip intl soap mysqli mcrypt apcu bz2 memcached \
-[...]
-```
-
-> We do not use the integrated `docker-php-ext-install` anymore due to errors when building with other platform targets ( buildx ).
-> `install-php-extensions` is slower but works better on different platforms.
+- opcache / apcu / memcached
+- mysqli / mysql / pdo / pdo-mysql / pdo-sqlite
+- zip / bz2
+- gd / intl / tokenizer / mcrypt
+- dom / zimplexml / xml
 
 ## Usage
 
@@ -144,32 +135,6 @@ services:
     image: zouloux/docker-debian-apache-php
     environment:
       DDAP_DEVTOOLS: 'true'
-    volumes:
-      - './:/root'
-```
-
-## Enable memcached server
-
-Enable memcached server and optionaly configure it to your needs.
-Default config is working out of the box.
-To check memcached, enable devtools and go to `/devtools/memcached`
-
-```yaml
-version: "3.7"
-services:
-  ddap :
-    image: zouloux/docker-debian-apache-php
-    environment:
-      # Enabled memcached server
-      DDAP_MEMCACHED: 'true'
-      # Specific memcached conf (here are default options)
-      #DDAP_MEMCACHED_USER: "root"
-      #DDAP_MEMCACHED_LISTEN: "0.0.0.0"
-      #DDAP_MEMCACHED_PORT: "11211"
-      #DDAP_MEMCACHED_MEMORY_LIMIT: "64"
-      #DDAP_MEMCACHED_CONN_LIMIT: "2048"
-      #DDAP_MEMCACHED_THREADS: "4"
-      #DDAP_MEMCACHED_MAX_REQS_PER_EVENT: "20"
     volumes:
       - './:/root'
 ```

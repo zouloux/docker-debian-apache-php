@@ -1,68 +1,69 @@
-# Inspired from
-# - https://blog.silarhi.fr/image-docker-php-apache-parfaite/
-# - https://semaphoreci.com/community/tutorials/dockerizing-a-php-application
-# - https://www.pascallandau.com/blog/structuring-the-docker-setup-for-php-projects/
+# https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-debian-11
+# https://www.itzgeek.com/how-tos/linux/debian/how-to-install-php-7-3-7-2-7-1-on-debian-10-debian-9-debian-8.html
 
-# Build X
-# - https://www.docker.com/blog/faster-multi-platform-builds-dockerfile-cross-compilation-guide/
-# Here $BUILDPLATFORM is m1 so we do not want that.
-#FROM --platform=$BUILDPLATFORM php:${IMAGE_PHP_VERSION}-apache
-
+FROM debian:11-slim
 ARG IMAGE_PHP_VERSION=8.0
-FROM php:${IMAGE_PHP_VERSION}-apache
 SHELL ["/bin/bash", "-c"]
+WORKDIR /root
 
-# We need to reassign ARG here after FROM
-ARG IMAGE_PHP_VERSION=8.0
-RUN echo "Building image with php${IMAGE_PHP_VERSION}"
+# Install all dependencies
+RUN apt update -qy && apt install -qy gnupg2 curl git sendmail zip unzip lsb-release
 
-# Install dependencies
-RUN apt update -q && apt install -qy git sendmail sendmail-cf
+# Setup sury php source and add it to apt
+# ca-certificates apt-transport-https
+RUN curl https://packages.sury.org/php/apt.gpg -o apt.gpg && apt-key add apt.gpg
+RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 
-# We use this script and docker-php-ext which seems to work better with buildx
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions
+# Install apache and PHP and connect them with libapache2-mod
+RUN apt update -qy && apt install -qy apache2 php${IMAGE_PHP_VERSION} libapache2-mod-php${IMAGE_PHP_VERSION}
 
-# Install php extensions
-RUN install-php-extensions opcache pdo_mysql gd zip intl soap mysqli mcrypt apcu bz2 memcached
+# Install PHP extensions
+RUN apt install -qy \
+    php${IMAGE_PHP_VERSION}-opcache php${IMAGE_PHP_VERSION}-apcu php${IMAGE_PHP_VERSION}-memcached \
+    php${IMAGE_PHP_VERSION}-mysqli php${IMAGE_PHP_VERSION}-mysql php${IMAGE_PHP_VERSION}-pdo php${IMAGE_PHP_VERSION}-pdo-mysql php${IMAGE_PHP_VERSION}-pdo-sqlite \
+    php${IMAGE_PHP_VERSION}-zip php${IMAGE_PHP_VERSION}-bz2 \
+    php${IMAGE_PHP_VERSION}-gd php${IMAGE_PHP_VERSION}-intl php${IMAGE_PHP_VERSION}-tokenizer php${IMAGE_PHP_VERSION}-mcrypt \
+    php${IMAGE_PHP_VERSION}-dom php${IMAGE_PHP_VERSION}-simplexml php${IMAGE_PHP_VERSION}-xml
+
+# Enable apache modules
+RUN a2enmod rewrite expires deflate brotli remoteip headers
+
+# Clean
+RUN apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Clean
-RUN apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy config directory and link each files
 COPY config /config
 RUN ln -sf /config/app.conf /etc/apache2/conf-available/zzz-app.conf; \
     ln -sf /config/devtools.conf /etc/apache2/conf-available/zzz-devtools.conf; \
     ln -sf /config/password.conf /etc/apache2/conf-available/zzz-password.conf; \
-    ln -sf /config/php.ini /usr/local/etc/php/conf.d/app.ini; \
+    ln -sf /config/php.ini /etc/php/${IMAGE_PHP_VERSION}/apache2/conf.d/app.ini; \
     ln -sf /config/vhost.conf /etc/apache2/sites-available/000-default.conf;
+
+# Forward request and error logs to docker log collector
+# Thanks OpenAI ;)
+RUN ln -sf /dev/stderr /var/log/apache2/error.log
+
+# Enable main app conf. Prefixed with "zzz" so it's included in last.
+RUN a2enconf zzz-app
 
 # Copy devtools
 COPY devtools/ /devtools/
 
-# Install memcache admin in dev tools
-RUN git clone https://github.com/hatamiarash7/Memcached-Admin.git /tmp/memcached-admin
-RUN mv /tmp/memcached-admin/app /devtools/memcached
-RUN rm -rf /tmp/memcached-admin
-
-# Install apache mods and configs
-RUN a2enmod rewrite remoteip headers
-RUN a2enconf zzz-app
-
-# Copy entry point middleware
-COPY entry-point.sh /entry-point.sh
-RUN chmod +x /entry-point.sh
-
-# Expose server
-EXPOSE 80
-WORKDIR /root
+# Copy startup scripts
+# Those script will be executed in runtime, not at buildtime, because of $envs
+COPY scripts/ /scripts/
 
 # Patch root rights before volumes are mapped
+RUN chmod -R +x /scripts/
 RUN chmod 655 /root
 
-# Start
-CMD ["/entry-point.sh"]
+# Expose main server port
+EXPOSE 80
+
+# Start apache in foreground mode.
+# If apache crashes, the container will also fall.
+CMD /scripts/start.sh
