@@ -8,7 +8,7 @@ This image is missing MySQL or any Database on purpose.
 
 Feel free to extend this image and adapt it to your needs or use it directly for your web projects.
 
-> This image is built for `linux/amd64` and `linux/arm64`
+> This image is built for `linux/amd64` (x86_64) and `linux/arm64` (aarch64)
 
 > **New** : this image is now from debian-slim, and not from PHP:X-apache anymore.
 > It's way slimmer and faster to build. See [./v1](v1) for previous source code.
@@ -33,8 +33,18 @@ Feel free to extend this image and adapt it to your needs or use it directly for
 - opcache / apcu / memcached
 - mysqli / mysql / pdo / pdo-mysql / pdo-sqlite
 - zip / bz2
-- gd / intl / tokenizer / mcrypt
+- gd / intl / tokenizer / mcrypt / mbstring
 - dom / zimplexml / xml
+- curl
+
+> mcrypt is only installed prior to `8.2`, this package being deprecated now.
+
+### Apache multi threding
+
+`prefork` is installed and configured to allow multi threading of Apache requests.
+This is better than the regular `worker` with PHP.
+
+> `sleep.php` is available in example to check that blocking scripts now works with other requests.
 
 ## Usage
 
@@ -67,7 +77,7 @@ services:
       - './:/root'
 ```
 
-> Available versions are `7.2` / `7.3` / `7.4` / `8.0` / `8.1`
+> Available versions are `7.2` / `7.3` / `7.4` / `8.0` / `8.1` / `8.2`
 
 ### B) Build it locally
 

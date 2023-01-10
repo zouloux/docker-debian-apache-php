@@ -5,7 +5,7 @@ services:
     build:
       context: ../
       args:
-        IMAGE_PHP_VERSION: "7.4"
+        IMAGE_PHP_VERSION: "8.2"
     environment:
       # Enable http login password
       #DDAP_LOGIN: "login"
