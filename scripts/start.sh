@@ -1,14 +1,36 @@
 #!/bin/bash
+set -e
 
+# Default config variables for apache
+: ${DDAP_APACHE_PUBLIC_DIRECTORY_PATH:='/root/public'}
+: ${DDAP_APACHE_DOCUMENT_ROOT_PATH:='/root/public'}
+: ${DDAP_DEVTOOLS_URL:='/devtools'}
+
+# Default config variables for PHP
+: ${DDAP_PHP_TIMEZONE:='UTC'}
+: ${DDAP_PHP_MEMORY_LIMIT:='256M'}
+: ${DDAP_PHP_MAX_EXECUTION_TIME:='30'}
+: ${DDAP_PHP_UPLOAD_SIZE:='128M'}
+
+# Replace variables from config files
+configFiles=( "/config/php.ini" "/config/app.conf" "/config/vhost.conf" "/config/password.conf" )
+for configFile in "${configFiles[@]}"; do
+  if ! mountpoint -q "$configFile"; then
+    envsubst < "$configFile" > "${configFile}.tmp" && mv "${configFile}.tmp" "$configFile"
+  fi
+done
+
+# Init devtools and htpasswd
 /scripts/devtools.sh
 /scripts/login.sh
+
+# Start PHP FPM
+# We need to do it here, it's not working when built in the image
+service "php${IMAGE_PHP_VERSION}-fpm" start
 
 # Next are copied from
 # https://github.com/docker-library/php/blob/master/8.0/bullseye/apache/apache2-foreground
 # Without this script, apache runs in 1 thread mode, which is super slow.
-
-#!/bin/bash
-set -e
 
 # Note: we don't just use "apache2ctl" here because it itself is just a shell-script wrapper around apache2 which provides extra functionality like "apache2ctl start" for launching apache2 in the background.
 # (also, when run as "apache2ctl <apache args>", it does not use "exec", which leaves an undesirable resident shell process)

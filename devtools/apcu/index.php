@@ -87,7 +87,7 @@ $vardom=array(
 	'SORT1' => '/^[AHSMCDTZ]$/',    // first sort key
 	'SORT2' => '/^[DA]$/',          // second sort key
 	'AGGR'  => '/^\d+$/',           // aggregation by dir level
-	'SEARCH'    => '~^[a-zA-Z0-9/_.-]*$~'           // aggregation by dir level
+	'SEARCH' => '/^.*$/'            // search regex
 );
 
 // cache scope
@@ -961,7 +961,7 @@ EOB;
 		'<option value=500',$MYREQUEST['COUNT']=='500'? ' selected':'','>Top 500</option>',
 		'<option value=0  ',$MYREQUEST['COUNT']=='0'  ? ' selected':'','>All</option>',
 		'</select>',
-		'&nbsp; Search: <input name=SEARCH value="',$MYREQUEST['SEARCH'],'" type=text size=25/>',
+		'&nbsp; Search: <input name=SEARCH value="',isset($MYREQUEST['SEARCH']) ? htmlspecialchars($MYREQUEST['SEARCH']) : '','" type=text size=25/>',
 		'&nbsp;<input type=submit value="GO!">',
 		'</form></div>';
 
@@ -1054,7 +1054,10 @@ EOB;
 						echo '<td class="td-last center">', date(DATE_FORMAT,$entry['deletion_time']), '</td>';
 					} else if ($MYREQUEST['OB'] == OB_USER_CACHE) {
 						echo '<td class="td-last center">';
-						echo '[<a href="', $MY_SELF, '&OB=', $MYREQUEST['OB'], '&DU=', urlencode($entry[$fieldkey]), '">Delete Now</a>]';
+						echo '[<a href="', $MY_SELF, '&OB=', $MYREQUEST['OB'],
+						'&DU=', urlencode($entry[$fieldkey]),
+						isset($MYREQUEST['SEARCH']) ? '&SEARCH=' . htmlspecialchars(urlencode($MYREQUEST['SEARCH'])) : '',
+						'">Delete Now</a>]';
 						echo '</td>';
 					} else {
 						echo '<td class="td-last center"> &nbsp; </td>';
