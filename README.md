@@ -97,9 +97,9 @@ services:
       - './dist:/root/public'
     environment :
       # Custom public and root path
-	  # Public directory
+      # Public directory
       DDAP_APACHE_PUBLIC_DIRECTORY_PATH: '/root/admin'
-	  # Document root.
+      # Document root.
       # http requests starts here, but the first, but the first public directory is /admin
       DDAP_APACHE_DOCUMENT_ROOT_PATH: '/root'
 
@@ -144,6 +144,7 @@ services:
 
 > You can change the `/devtools` URL with the `DDAP_DEVTOOLS_URL` env. 
 
+> Add your own tools by mapping the `/devtools` volume
 
 ## Use dot env file
 
@@ -247,7 +248,9 @@ services:
 
 ---
 
-## Test this image or work on it 
+## Advanced usage
+
+### Test this image or work on it 
 
 - `git clone https://github.com/zouloux/docker-debian-apache-php.git`
 - `cd docker-debian-apache-php/test`
@@ -255,7 +258,7 @@ services:
 - `docker-compose up`
 - Then go to localhost:8080
 
-## Build it locally ( advanced )
+### Build it locally
 
 If you need to customize this image locally, you still can specify the PHP version.
 Use `args` to specify current php version. Non tested PHP version may work.
