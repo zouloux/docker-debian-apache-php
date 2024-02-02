@@ -1,0 +1,29 @@
+
+version: '3.7'
+services:
+  ddap :
+    image: 'zouloux/docker-debian-apache-php:8.3'
+    environment:
+      # Enable http login password
+      DDAP_LOGIN: 'login'
+      DDAP_PASSWORD: 'password'
+      # Enabled php devtools in /devtools
+      DDAP_DEVTOOLS: 'true'
+      DDAP_DEVTOOLS_URL: '/admin/devtools'
+      # Custom public and root path
+      DDAP_APACHE_PUBLIC_DIRECTORY_PATH: '/root/admin'
+      DDAP_APACHE_DOCUMENT_ROOT_PATH: '/root'
+      # Custom PHP config
+      DDAP_PHP_TIMEZONE: 'Europe/Paris'
+      DDAP_PHP_MEMORY_LIMIT: '256M'
+      DDAP_PHP_MAX_EXECUTION_TIME: '120'
+      DDAP_PHP_UPLOAD_SIZE: '128M'
+    volumes:
+      # Map root hidden files
+      - './composer.json:/root/composer.json'
+      - './composer.lock:/root/composer.lock'
+      - './auth.json:/root/auth.json'
+      - './vendor:/root/vendor'
+      - './.env:/root/.env'
+      # Map public directory
+      - './admin:/root/admin'
