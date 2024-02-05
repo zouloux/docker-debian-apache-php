@@ -82,6 +82,18 @@ RUN chmod 655 /root
 # For https://stackoverflow.com/questions/22215173/session-error-permisison-denied-13
 RUN chmod 777 /var/lib/php/sessions
 
+# Set default environment variables for Apache
+ENV DDAP_APACHE_PUBLIC_DIRECTORY_PATH=/root/public \
+    DDAP_APACHE_DOCUMENT_ROOT_PATH=/root/public \
+    DDAP_DEVTOOLS_URL=/devtools
+
+# Set default environment variables for PHP
+ENV DDAP_PHP_TIMEZONE=UTC \
+    DDAP_PHP_MEMORY_LIMIT=256M \
+    DDAP_PHP_MAX_EXECUTION_TIME=30 \
+    DDAP_PHP_UPLOAD_SIZE=128M
+
+
 # Expose main server port
 EXPOSE 80
 

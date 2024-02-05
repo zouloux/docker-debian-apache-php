@@ -1,17 +1,6 @@
 #!/bin/bash
 set -e
 
-# Default config variables for apache
-: ${DDAP_APACHE_PUBLIC_DIRECTORY_PATH:='/root/public'}
-: ${DDAP_APACHE_DOCUMENT_ROOT_PATH:='/root/public'}
-: ${DDAP_DEVTOOLS_URL:='/devtools'}
-
-# Default config variables for PHP
-: ${DDAP_PHP_TIMEZONE:='UTC'}
-: ${DDAP_PHP_MEMORY_LIMIT:='256M'}
-: ${DDAP_PHP_MAX_EXECUTION_TIME:='30'}
-: ${DDAP_PHP_UPLOAD_SIZE:='128M'}
-
 # Replace variables from config files
 configFiles=( "/config/php.ini" "/config/app.conf" "/config/vhost.conf" "/config/password.conf" )
 for configFile in "${configFiles[@]}"; do
@@ -19,6 +8,9 @@ for configFile in "${configFiles[@]}"; do
     envsubst < "$configFile" > "${configFile}.tmp" && mv "${configFile}.tmp" "$configFile"
   fi
 done
+
+cat /config/vhost.conf
+cat /config/php.ini
 
 # Init devtools and htpasswd
 /scripts/devtools.sh
