@@ -10,6 +10,8 @@ ENV IMAGE_PHP_VERSION=${IMAGE_PHP_VERSION}
 
 # Set default environment variables for Apache
 ENV DDAP_PUBLIC_PATH=/var/www/html \
+	DDAP_BASE=/ \
+	DDAP_DEVTOOLS=false \
     DDAP_DEVTOOLS_URL=/devtools \
     DDAP_PHP_DISPLAY_ERRORS=true \
 	DDAP_PHP_TIMEZONE=UTC \
@@ -20,7 +22,7 @@ ENV DDAP_PUBLIC_PATH=/var/www/html \
 SHELL ["/bin/bash", "-c"]
 
 # Setup sury php source and add it to apt
-RUN apt update -qy && apt install -qy gnupg2 curl lsb-release gettext \
+RUN apt update -qy && apt install -qy gnupg2 curl lsb-release gettext zip unzip \
 	&& curl https://packages.sury.org/php/apt.gpg -o apt.gpg && apt-key add apt.gpg \
 	&& echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list \
 	&& apt update -qy
@@ -100,6 +102,7 @@ RUN mkdir -p /var/log /run/php /var/www /var/run/apache2 /auth /var/www/data && 
 
 # Copy devtools
 COPY devtools/ /devtools/
+RUN chown -R www-data:www-data /devtools && chmod -R 775 /devtools
 
 # Copy runtime configs
 COPY config /config
@@ -108,6 +111,8 @@ RUN chown -R www-data:www-data /config && chmod -R 775 /config
 # Copy runtime scripts
 COPY scripts/ /scripts/
 RUN chown -R www-data:www-data /scripts && chmod -R 755 /scripts
+
+RUN mkdir /var/empty
 
 # Link apache and php configs to mountable config files with their default values
 RUN ln -sf /config/app.conf /etc/apache2/conf-available/zzz-app.conf; \

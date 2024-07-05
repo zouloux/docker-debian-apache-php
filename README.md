@@ -56,7 +56,7 @@ PHP is working in FPM mode which means that a PHP service is running.
 
 Common usage is to use an already built image from Docker Hub :
 
-#### Specify PHP version
+### Specify PHP version
 
 ```yaml
 services:
@@ -71,7 +71,7 @@ services:
 
 > Web root is in `/var/www/html` by default and can be changed with `DDAP_PUBLIC_PATH`
 
-## Map volumes
+### Map volumes
 
 - `/var/www` is user's root and current directory. Can be used to run processes outside `/html` directory ( ex `composer install` )
 - `/var/www/html` is root published directory by Apache ( http requests starts here ).
@@ -85,7 +85,41 @@ services:
       - './public:/var/www/html'
 ```
 
-## Enable apache login / password for public directory
+### Change webroot path
+
+```yaml
+services:
+  ddap :
+    image: zouloux/docker-debian-apache-php:v2-php8.3
+    volumes:
+      - './public:/var/www/public'
+    environment:
+      DDAP_PUBLIC_PATH: '/var/www/public'
+```
+
+### Change base
+
+Default base is `/`, and can be changed to a sub-directory.
+It means that all request will have to be from the base to go to the webroot.
+This can be handy in some case when Apache is running behind a reverse-proxy under a specific path.
+
+
+```yaml
+services:
+  ddap :
+    image: zouloux/docker-debian-apache-php:v2-php8.3
+    volumes:
+      - './public:/var/www/html'
+    environment:
+      DDAP_BASE: '/backend'
+```
+
+> `http://localhost/backend/test.html` will target `/var/www/html/test.html`
+
+> All requests that are not in `/backend` will be refused 
+
+
+### Enable apache login / password for public directory
 
 This HTTP password will be required on all `/var/www/html` directory.
 
@@ -101,7 +135,7 @@ services:
       - './public:/var/www/html'
 ```
 
-## Dev tools
+### Dev tools
 
 Some devtools can be installed. `http://docker-host/devtools` folder will be available if enabled.
 See [/devtools](https://github.com/zouloux/docker-debian-apache-php/tree/main/devtools) directory.
@@ -126,7 +160,7 @@ services:
 > Add your own tools by mapping the `/devtools` directory
 
 
-## Use dot env file
+### Use dot env file
 
 A `dotenv` file can also be used for convenience.
 
@@ -156,7 +190,7 @@ DDAP_DEVTOOLS=true
 DDAP_DEVTOOLS_URL=/admin/devtools
 ```
 
-## Customize PHP config
+### Customize PHP config
 
 You can override some PHP config with envs.
 Here is an override example with default values :
@@ -172,7 +206,7 @@ services:
       DDAP_PHP_UPLOAD_SIZE: "128M"
 ```
 
-## Custom PHP config file
+### Custom PHP config file
 
 To use custom config files for apache or php,
 Simply create your `config/php.ini` for ex, and map specific config file with `volumes`.
@@ -194,7 +228,7 @@ services:
 
 > `DDAP_PHP_*` envs will not work anymore with a custom `php.ini` file.
 
-## Compose with MySQL
+### Compose with MySQL
 
 This image is missing MySQL image on purpose. To add a MySQL server to your stack :
 

@@ -11,6 +11,7 @@ services:
 #      DDAP_LOGIN: "login"
 #      DDAP_PASSWORD: "password"
       # Enabled php devtools in /devtools
+      #DDAP_BASE: '/backend'
       DDAP_DEVTOOLS: 'true'
       DDAP_PHP_DISPLAY_ERRORS: 'false'
 #      DDAP_DEVTOOLS_URL: '/admin/devtools'
