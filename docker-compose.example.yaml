@@ -1,22 +1,18 @@
 
-version: '3.7'
 services:
   ddap :
-    image: 'zouloux/docker-debian-apache-php:8.3'
+    image: 'zouloux/docker-debian-apache-php:v2-php8.3'
     environment:
-      # Enable http login password
+      # Enable http login password ( default is no password )
       DDAP_LOGIN: 'login'
       DDAP_PASSWORD: 'password'
-      # Enabled php devtools in /devtools
-      DDAP_DEVTOOLS: 'true'
-      DDAP_DEVTOOLS_URL: '/admin/devtools'
-      # Custom public and root path
-      # Calls to http://localhost:8080/ will give 403
-      # Calls to http://localhost:8080/admin will show ./admin content relative to this docker compose file
-      # NOTE : Remove those to go back to the default /root/public architecture and remap volume bellow.
-      DDAP_APACHE_PUBLIC_DIRECTORY_PATH: '/root/admin'
-      DDAP_APACHE_DOCUMENT_ROOT_PATH: '/root'
+      # Enabled php devtools in /devtools ( default is no devtools )
+      DDAP_DEVTOOLS: 'false'
+      DDAP_DEVTOOLS_URL: '/devtools'
+      # Custom public path
+      DDAP_PUBLIC_PATH: '/var/www/html'
       # Custom PHP config
+      DDAP_PHP_DISPLAY_ERRORS: 'false'
       DDAP_PHP_TIMEZONE: 'Europe/Paris'
       DDAP_PHP_MEMORY_LIMIT: '256M'
       DDAP_PHP_MAX_EXECUTION_TIME: '120'
@@ -25,12 +21,13 @@ services:
       - '8080:80'
     volumes:
       # Map root hidden files
-      - './composer.json:/root/composer.json'
-      - './composer.lock:/root/composer.lock'
-      - './auth.json:/root/auth.json'
-      - './vendor:/root/vendor'
-      - './.env:/root/.env'
+      - './composer.json:/var/www/composer.json'
+      - './composer.lock:/var/www/composer.lock'
+      - './auth.json:/var/www/auth.json'
+      - './vendor:/var/www/vendor'
+      - './.env:/var/www/.env'
       # Map public directory
-      # NOTE : Map ./public to /root/public if going to default architecture
-      - './admin:/root/admin'
+      - './public:/var/www/html'
+      # Map dynamic data directory
+      - './data:/var/www/data'
 

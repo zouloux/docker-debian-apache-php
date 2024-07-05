@@ -1,8 +1,6 @@
 **TLDR** : [docker-compose.example.yaml](docker-compose.example.yaml)
 
-
 # Docker Debian Apache PHP
-
 
 **DDAP** is a docker image based on Debian, with Apache 2.4, and PHP (from 7.2 to 8.3).
 This image is missing MySQL or any Database on purpose.
@@ -10,9 +8,11 @@ This image is missing MySQL or any Database on purpose.
 
 > Available on [Docker Hub](https://hub.docker.com/repository/docker/zouloux/docker-debian-apache-php)
 
+> Please note that obsolete PHP versions **7.X** are not pushed anymore but can be built locally on your project.
+
 Feel free to extend this image and adapt it to your needs or use it directly for your web projects.
 
-> This image is built for `linux/amd64` (x86_64) and `linux/arm64` (aarch64)
+> This image is built for `linux/amd64` (x86_64) and `linux/arm64` (aarch64 / Apple Silicon)
 
 > **New** : this image is now from debian-slim, and not from PHP:X-apache anymore.
 > It's way slimmer and faster to build. See [./v1](v1) for previous source code.
@@ -48,9 +48,7 @@ Feel free to extend this image and adapt it to your needs or use it directly for
 
 PHP is working in FPM mode which means that a PHP service is running. 
 
-### Apache multi threding
-
-`mpm_event` is installed and configured to allow multi threading of Apache requests.
+### Apache multi threading
 
 > `sleep.php` is available in example to check that blocking scripts now works with other requests.
 
@@ -61,69 +59,46 @@ Common usage is to use an already built image from Docker Hub :
 #### Specify PHP version
 
 ```yaml
-version: "3.7"
 services:
   ddap :
     # Example, we need the legacy PHP 7.4 for a rusty project
-    image: zouloux/docker-debian-apache-php:7.4
+    image: zouloux/docker-debian-apache-php:v2-php7.4
     volumes:
-      - './:/root'
+      - './public:/var/www/html'
 ```
 
-> Available versions are `7.2` / `7.3` / `7.4` / `8.0` / `8.1` / `8.2` / `8.3`
+> Available versions are `v2-php7.2` / `v2-php7.3` / `v2-php7.4` / `v2-php8.0` / `v2-php8.1` / `v2-php8.2` / `v2-php8.3`
 
-> Web root is in `/root/public` by default
+> Web root is in `/var/www/html` by default and can be changed with `DDAP_PUBLIC_PATH`
 
 ## Map volumes
 
-- `/root` is user's root and current directory. Can be used to run processes outside `/public` directory ( ex `composer install` )
-- `/root/public` is root published directory by Apache ( http requests starts here ).
+- `/var/www` is user's root and current directory. Can be used to run processes outside `/html` directory ( ex `composer install` )
+- `/var/www/html` is root published directory by Apache ( http requests starts here ).
 
 ```yaml
-version: "3.7"
 services:
   ddap :
-    image: zouloux/docker-debian-apache-php
+    image: zouloux/docker-debian-apache-php:v2-php8.3
     volumes:
-      - './:/root'
-      - './dist:/root/public'
+      - './:/var/www'
+      - './public:/var/www/html'
 ```
-
-## Change default root and public apache directories
-
-```yaml
-version: "3.7"
-services:
-  ddap :
-    image: zouloux/docker-debian-apache-php
-    volumes:
-      - './:/root'
-      - './dist:/root/public'
-    environment :
-      # Custom public and root path
-      # Public directory
-      DDAP_APACHE_PUBLIC_DIRECTORY_PATH: '/root/admin'
-      # Document root.
-      # http requests starts here, but the first, but the first public directory is /admin
-      DDAP_APACHE_DOCUMENT_ROOT_PATH: '/root'
-
-```
-
 
 ## Enable apache login / password for public directory
 
-This HTTP password will be required on all `/root/public` directory.
+This HTTP password will be required on all `/var/www/html` directory.
 
 ```yaml
 version: "3.7"
 services:
   ddap :
-    image: zouloux/docker-debian-apache-php
+    image: zouloux/docker-debian-apache-php:v2-php8.3
     environment:
       DDAP_LOGIN: admin
       DDAP_PASSWORD: secret
     volumes:
-      - './:/root'
+      - './public:/var/www/html'
 ```
 
 ## Dev tools
@@ -139,16 +114,17 @@ Available devtools :
 version: "3.7"
 services:
   ddap :
-    image: zouloux/docker-debian-apache-php
+    image: zouloux/docker-debian-apache-php:v2-php8.3
     environment:
       DDAP_DEVTOOLS: 'true'
     volumes:
-      - './:/root'
+      - './public:/var/www/html'
 ```
 
 > You can change the `/devtools` URL with the `DDAP_DEVTOOLS_URL` env. 
 
-> Add your own tools by mapping the `/devtools` volume
+> Add your own tools by mapping the `/devtools` directory
+
 
 ## Use dot env file
 
@@ -168,7 +144,7 @@ services:
       DDAP_DEVTOOLS: ${DDAP_DEVTOOLS:-}
       DDAP_DEVTOOLS_URL: ${DDAP_DEVTOOLS_URL:-}
     volumes:
-      - './:/root'
+      - './public:/var/www/html'
 ```
 
 `.env` file :
@@ -189,6 +165,7 @@ Here is an override example with default values :
 services:
   ddap :
     environment:
+      DDAP_PHP_DISPLAY_ERRORS: "false"
       DDAP_PHP_TIMEZONE: "UTC"
       DDAP_PHP_MEMORY_LIMIT: "256M"
       DDAP_PHP_MAX_EXECUTION_TIME: "30"
@@ -205,13 +182,13 @@ Default configs are [available here](https://github.com/zouloux/docker-debian-ap
 version: "3.7"
 services:
   ddap:
-    image: zouloux/docker-debian-apache-php
+    image: zouloux/docker-debian-apache-php:v2-php8.3
     environment:
       DDAP_LOGIN: ${DDAP_LOGIN:-}
       DDAP_PASSWORD: ${DDAP_PASSWORD:-}
       DDAP_DEVTOOLS: ${DDAP_DEVTOOLS:-}
     volumes:
-      - './:/root'
+      - './public:/var/www/html'
       - './config/php.ini:/config/php.ini'
 ```
 
@@ -226,9 +203,9 @@ version: "3.7"
 services:
 
   ddap :
-    image: zouloux/docker-debian-apache-php
+    image: zouloux/docker-debian-apache-php:v2-php8.3
     volumes:
-      - './:/root'
+      - './public:/var/www/html'
 
   maria:
     image: mariadb
