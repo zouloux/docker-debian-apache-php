@@ -10,6 +10,7 @@ ENV IMAGE_PHP_VERSION=${IMAGE_PHP_VERSION}
 
 # Set default environment variables for Apache
 ENV DDAP_PUBLIC_PATH=/var/www/html \
+	DDAP_PORT=80 \
 	DDAP_BASE=/ \
 	DDAP_DEVTOOLS=false \
     DDAP_DEVTOOLS_URL=/devtools \
@@ -113,19 +114,23 @@ COPY scripts/ /scripts/
 RUN chown -R www-data:www-data /scripts && chmod -R 755 /scripts
 
 RUN mkdir /var/empty
+RUN rm -rf /etc/apache2/ports.conf
 
 # Link apache and php configs to mountable config files with their default values
 RUN ln -sf /config/app.conf /etc/apache2/conf-available/zzz-app.conf; \
     ln -sf /config/devtools.conf /etc/apache2/conf-available/zzz-devtools.conf; \
     ln -sf /config/password.conf /etc/apache2/conf-available/zzz-password.conf; \
     ln -sf /config/vhost.conf /etc/apache2/sites-available/000-default.conf; \
-    ln -sf /config/php.ini /etc/php/${IMAGE_PHP_VERSION}/fpm/php.ini
+    ln -sf /config/php.ini /etc/php/${IMAGE_PHP_VERSION}/fpm/php.ini; \
+    ln -sf /config/ports.conf /etc/apache2/ports.conf
+
+#RUN a2enconf zzz-app
 
 # Switch to non-root user
 USER www-data
 
 WORKDIR /var/www
-EXPOSE 80
+#EXPOSE 80
 
 # Start Apache and PHP-FPM
-CMD ["bash", "-c", "/scripts/start.sh"]
+CMD "/scripts/start.sh"

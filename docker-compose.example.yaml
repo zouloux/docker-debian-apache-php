@@ -3,6 +3,9 @@ services:
   ddap :
     image: 'zouloux/docker-debian-apache-php:v2-php8.3'
     environment:
+      # Port of apache can be now defined ( default is 80 )
+      # Do not use a reserve port like 9000
+      DDAP_PORT: '7000'
       # Enable http login password ( default is no password )
       DDAP_LOGIN: 'login'
       DDAP_PASSWORD: 'password'
@@ -18,7 +21,7 @@ services:
       DDAP_PHP_MAX_EXECUTION_TIME: '120'
       DDAP_PHP_UPLOAD_SIZE: '128M'
     ports :
-      - '8080:80'
+      - '8080:7000'
     volumes:
       # Map root hidden files
       - './composer.json:/var/www/composer.json'

@@ -7,6 +7,8 @@ services:
         IMAGE_PHP_VERSION: "8.3"
     environment:
       VIRTUAL_HOST: "localhost"
+      DDAP_PORT: 7000
+      VIRTUAL_PORT: 7000
       # Enable http login password
 #      DDAP_LOGIN: "login"
 #      DDAP_PASSWORD: "password"
