@@ -2,22 +2,21 @@
 
 # Docker Debian Apache PHP
 
-**DDAP** is a docker image based on Debian, with Apache 2.4, and PHP (from 7.2 to 8.3).
-This image is missing MySQL or any Database on purpose.
-[Compose with a Mysql or Maria image to add this feature.](#compose-mysql-image)
+**DDAP** is a docker image based on Debian, with **Apache 2.4**, and **PHP** (from 7.2 to 8.4).
 
-> Available on [Docker Hub](https://hub.docker.com/repository/docker/zouloux/docker-debian-apache-php)
-
-> Please note that obsolete PHP versions **7.X** are not pushed frequently but can be built locally on your project.
+Available on [Docker Hub](https://hub.docker.com/repository/docker/zouloux/docker-debian-apache-php)
 
 > Latest push is 15th April 2025 ( 7.2 / 7.3 / 7.4 / 8.0 / 8.1 / 8.2 / 8.3 / 8.4 ) 
+> Please note that obsolete PHP versions **7.X** are not pushed frequently but can be built locally on your project.
 
+This image is built for `linux/amd64` (x86_64) and `linux/arm64` (aarch64 / Apple Silicon)
 Feel free to extend this image and adapt it to your needs or use it directly for your web projects.
-
-> This image is built for `linux/amd64` (x86_64) and `linux/arm64` (aarch64 / Apple Silicon)
 
 > **New** : this image is now from debian-slim, and not from PHP:X-apache anymore.
 > It's way slimmer and faster to build. See [./v1](v1) for previous source code.
+
+> This image is missing MySQL or any Database on purpose.
+[Compose with a Mysql or Maria image to add this feature.](#compose-mysql-image)
 
 ## Installed extensions
 
