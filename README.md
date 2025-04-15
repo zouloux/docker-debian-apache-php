@@ -261,6 +261,29 @@ services:
       PMA_HOST: "maria"
 ```
 
+### Crontab
+
+Trigger crontabs with env `DDAP_CRON_TASK`
+
+```yaml
+services:
+  ddap :
+    image: zouloux/docker-debian-apache-php:v2-php8.3
+    volumes:
+      - './public:/var/www/html'
+    environment:
+      DDAP_PORT: 7000
+      DDAP_CRON_TASK: "* * * * * curl http://localhost:7000/cron.php"
+```
+
+> This will trigger cron.php every minute. Please note the used port for internal querying.
+
+```php
+<?php
+error_log("Cron curl tab received ".time());
+echo "ok";
+```
+
 ---
 
 ## Advanced usage

@@ -4,7 +4,7 @@ services:
     build:
       context: ../
       args:
-        IMAGE_PHP_VERSION: "8.3"
+        IMAGE_PHP_VERSION: "8.4"
     environment:
       VIRTUAL_HOST: "localhost"
       DDAP_PORT: 7000
@@ -14,6 +14,7 @@ services:
 #      DDAP_PASSWORD: "password"
       # Enabled php devtools in /devtools
       #DDAP_BASE: '/backend'
+      DDAP_CRON_TASK: "* * * * * curl http://localhost:7000/cron.php"
       DDAP_DEVTOOLS: 'true'
       DDAP_PHP_DISPLAY_ERRORS: 'false'
 #      DDAP_DEVTOOLS_URL: '/admin/devtools'

@@ -4,6 +4,13 @@ set -e
 #ls -la /config
 #ls -la /config/templates
 
+if [[ -n "$DDAP_CRON_TASK" ]]; then
+  echo "$DDAP_CRON_TASK" > /etc/cron.d/tasks
+  sudo crontab /etc/cron.d/tasks
+  echo ">> Starting cron service"
+  sudo cron
+fi
+
 # Replace variables from config files, only if not mounted from docker compose
 configFiles=( "app.conf" "devtools.conf" "password.conf" "php.ini" "ports.conf"  "vhost-base.conf" "vhost-direct.conf"  )
 for configFile in "${configFiles[@]}"; do
