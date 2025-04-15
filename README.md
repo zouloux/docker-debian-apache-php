@@ -8,7 +8,9 @@ This image is missing MySQL or any Database on purpose.
 
 > Available on [Docker Hub](https://hub.docker.com/repository/docker/zouloux/docker-debian-apache-php)
 
-> Please note that obsolete PHP versions **7.X** are not pushed anymore but can be built locally on your project.
+> Please note that obsolete PHP versions **7.X** are not pushed frequently but can be built locally on your project.
+
+> Latest push is 15th April 2025 ( 7.2 / 7.3 / 7.4 / 8.0 / 8.1 / 8.2 / 8.3 / 8.4 ) 
 
 Feel free to extend this image and adapt it to your needs or use it directly for your web projects.
 
